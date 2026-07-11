@@ -1,0 +1,16 @@
+{
+    "name": "Writer Studio",
+    "short_name": "Writer Studio",
+    "description": "The Ultimate Workspace for Authors",
+    "start_url": "/dashboard.html",
+    "display": "standalone",
+    "background_color": "#0a0e27",
+    "theme_color": "#0f172a",
+    "icons": [
+        {
+            "src": "/img/logo-squaricle.png",
+            "sizes": "192x192 512x512 any",
+            "type": "image/png"
+        }
+    ]
+}

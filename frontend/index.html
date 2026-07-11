@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Writer Studio - The Ultimate Workspace for Authors</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="icon" type="image/png" href="/img/logo-circle.png">
+    <link rel="manifest" href="/manifest.json">
+    <script>
+        // Redirect to dashboard if already logged in
+        if (localStorage.getItem('token') || sessionStorage.getItem('token')) {
+            window.location.href = '/dashboard.html';
+        }
+    </script>
+</head>
+<body>
+    <!-- Top Navigation -->
+    <nav class="topbar landing-nav">
+        <div class="nav-left">
+            <img src="/img/logo-nopadding.png" alt="Writer Studio Logo" class="logo-small">
+            <span class="brand-name">Writer Studio</span>
+        </div>
+        <div class="nav-right">
+            <button id="themeToggle" class="theme-switcher" aria-label="Toggle Dark Mode" style="position: relative; top: auto; right: auto;">
+                <svg id="moonIcon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:none;"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
+                <svg id="sunIcon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>
+            </button>
+            <button class="btn btn-text login-btn" onclick="window.location.href='/auth.html?mode=login'">Login</button>
+            <button class="btn" onclick="window.location.href='/auth.html?mode=register'">Get Started</button>
+        </div>
+    </nav>
+
+    <!-- Landing Page Content -->
+    <div id="landingPage">
+        <!-- Hero Section -->
+        <header class="hero-section">
+            <div class="hero-content">
+                <h1 class="fade-up-anim">Write, Organize, and Export. <br><span class="text-highlight">Beautifully.</span></h1>
+                <p class="fade-up-anim delay-1">The all-in-one workspace for authors to manage characters, storyboards, and manuscripts.</p>
+                <button class="btn btn-large fade-up-anim delay-2" onclick="window.location.href='/auth.html?mode=register'">Start Writing for Free</button>
+            </div>
+            <div class="hero-visual fade-up-anim delay-3">
+                <div class="floating-mockup mockup-editor">
+                    <div class="mockup-header"><span class="dot"></span><span class="dot"></span><span class="dot"></span></div>
+                    <div class="mockup-body">
+                        <div class="line title"></div>
+                        <div class="line"></div>
+                        <div class="line short"></div>
+                    </div>
+                </div>
+                <div class="floating-mockup mockup-sidebar delayed-float">
+                    <div class="mockup-avatar"></div>
+                    <div class="line mini"></div>
+                    <div class="line mini short"></div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Bento Grid Showcase -->
+        <section class="bento-section container">
+            <h2 class="section-title fade-up-anim">Everything a writer needs.</h2>
+            <div class="bento-grid">
+                <!-- Card 1: Large Editor -->
+                <div class="bento-card bento-large fade-up-anim scroll-reveal">
+                    <div class="bento-content">
+                        <h3>Distraction-Free Editor</h3>
+                        <p>A beautiful WYSIWYG editor with full LaTeX support and inline commenting. Focus on your words.</p>
+                    </div>
+                    <div class="bento-visual editor-visual">
+                        <div class="editor-ui-fake"></div>
+                    </div>
+                </div>
+
+                <!-- Card 2: Storyboards -->
+                <div class="bento-card bento-medium fade-up-anim scroll-reveal delay-1">
+                    <div class="bento-content">
+                        <h3>Storyboards & Lore</h3>
+                        <p>Keep track of timelines, locations, and your intricate world-building.</p>
+                    </div>
+                    <div class="bento-visual storyboard-visual"></div>
+                </div>
+
+                <!-- Card 3: Characters -->
+                <div class="bento-card bento-medium fade-up-anim scroll-reveal delay-2">
+                    <div class="bento-content">
+                        <h3>Character Profiles</h3>
+                        <p>Deep character tracking with relationships, traits, and behavioral notes.</p>
+                    </div>
+                    <div class="bento-visual char-visual"></div>
+                </div>
+
+                <!-- Card 4: Security -->
+                <div class="bento-card bento-wide fade-up-anim scroll-reveal">
+                    <div class="bento-content">
+                        <h3>Local-First & Encrypted</h3>
+                        <p>Your stories are yours. Export and import with AES-encrypted .wstory formats.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <footer class="landing-footer">
+            <h2>Ready to tell your story?</h2>
+            <button class="btn btn-large" onclick="window.location.href='/auth.html?mode=register'">Join Writer Studio</button>
+            <p>&copy; 2026 Writer Studio.</p>
+        </footer>
+    </div>
+
+    <script src="/js/app.js"></script>
+    <script src="/js/pwa.js"></script>
+</body>
+</html>

@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Onboarding - Writer Studio</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <style>
+        /* Onboarding specific styles */
+        body { background: var(--bg-color); color: var(--text-dark); min-height: 100vh; display: flex; justify-content: center; align-items: center; padding: 40px 20px; }
+        
+        .onboarding-container {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            box-shadow: var(--shadow-md);
+            max-width: 600px;
+            width: 100%;
+            padding: 40px;
+            animation: fadeUp 0.6s ease;
+        }
+
+        .onboarding-header { text-align: center; margin-bottom: 30px; }
+        .onboarding-header h1 { font-family: var(--font-serif); font-size: 32px; margin-bottom: 10px; }
+        .onboarding-header p { color: var(--text-muted); }
+
+        /* Avatar Upload */
+        .avatar-upload-container { display: flex; flex-direction: column; align-items: center; margin-bottom: 30px; }
+        .avatar-circle {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            background: var(--bg-color);
+            border: 2px dashed var(--border);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            overflow: hidden;
+            position: relative;
+            transition: var(--transition);
+        }
+        .avatar-circle:hover { border-color: var(--accent-color); background: rgba(30, 64, 175, 0.05); }
+        .avatar-circle img { width: 100%; height: 100%; object-fit: cover; display: none; }
+        .avatar-placeholder { color: var(--text-muted); text-align: center; font-size: 14px; }
+        .avatar-placeholder svg { margin-bottom: 4px; }
+
+        /* Two column layout for forms */
+        .form-row { display: flex; gap: 20px; }
+        .form-row .form-group { flex: 1; }
+
+        /* Custom Checkbox Group for Platforms */
+        .platform-group { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 8px; }
+        .platform-label {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 12px;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: var(--transition);
+            font-size: 14px;
+        }
+        .platform-label input[type="checkbox"] { display: none; }
+        .platform-label:hover { border-color: var(--accent-hover); }
+        .platform-label input:checked + span { font-weight: 600; color: var(--accent-color); }
+        .platform-label:has(input:checked) { border-color: var(--accent-color); background: rgba(30, 64, 175, 0.05); }
+        
+        /* Avatar Overlay on Hover */
+        .avatar-overlay {
+            position: absolute;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.4);
+            color: white;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            opacity: 0;
+            transition: var(--transition);
+        }
+        .avatar-circle:hover .avatar-overlay { opacity: 1; }
+        
+        /* Circular Progress for Avatar Upload */
+        .circular-progress {
+            position: absolute;
+            inset: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: rgba(255, 255, 255, 0.8);
+            border-radius: 50%;
+            z-index: 10;
+        }
+        body.dark .circular-progress { background: rgba(0, 0, 0, 0.6); }
+        .circular-progress svg { width: 100%; height: 100%; transform: rotate(-90deg); padding: 2px; }
+        .circular-progress .circle-bg { fill: none; stroke: var(--border); stroke-width: 2; }
+        .circular-progress .circle { fill: none; stroke: var(--accent-color); stroke-width: 2; transition: stroke-dasharray 0.1s; }
+        
+        /* Minimal Navbar for Onboarding */
+        .onboarding-nav {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            padding: 20px 5%;
+            display: flex;
+            align-items: center;
+            pointer-events: none; /* Let clicks pass through if needed, though logo is pointer-events: auto */
+        }
+        .onboarding-nav .auth-logo-link {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 22px;
+            color: var(--text-dark);
+            pointer-events: auto;
+        }
+        .onboarding-nav .logo-small {
+            width: 40px;
+            height: 40px;
+        }
+        
+        .agreements { margin-top: 30px; margin-bottom: 30px; border-top: 1px solid var(--border); padding-top: 20px;}
+        .agreements .checkbox-label { margin-bottom: 12px; }
+
+        @media (max-width: 600px) {
+            .form-row { flex-direction: column; gap: 0; }
+            .platform-group { grid-template-columns: 1fr; }
+            .onboarding-container { padding: 30px 20px; }
+        }
+    </style>
+    <link rel="icon" type="image/png" href="/img/logo-circle.png">
+    <link rel="manifest" href="/manifest.json">
+</head>
+<body>
+
+    <!-- Minimal Navbar -->
+    <nav class="onboarding-nav">
+        <a href="/index.html" class="auth-logo-link">
+            <img src="/img/logo-nopadding.png" alt="Writer Studio Logo" class="logo-small">
+            <span>Writer Studio</span>
+        </a>
+    </nav>
+
+    <!-- Theme Switcher -->
+    <button id="themeToggle" class="theme-switcher" aria-label="Toggle Dark Mode">
+        <svg id="moonIcon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:none;"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
+        <svg id="sunIcon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>
+    </button>
+
+    <div class="onboarding-container">
+        <div class="onboarding-header">
+            <h1>Complete Your Profile</h1>
+            <p>Tell us a little bit about yourself and where you write.</p>
+        </div>
+
+        <form id="onboardingForm">
+            
+            <!-- Avatar Upload -->
+            <div class="avatar-upload-container">
+                <label for="avatarUpload" class="avatar-circle" id="avatarPreviewContainer">
+                    <div class="avatar-placeholder" id="avatarPlaceholder">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21.2 15c.7-1.2 1-2.5.7-3.9-.6-2-2.4-3.5-4.4-3.5h-1.2c-.7-3-3.2-5.2-6.2-5.6-3-.3-5.9 1.3-7.3 4-1.2 2.5-1 6.5.5 8.8m8.7-1.6V21"/><path d="M16 16l-4-4-4 4"/></svg>
+                        <br>Upload
+                    </div>
+                    <img id="avatarImg" src="" alt="Avatar Preview">
+                    <div class="avatar-overlay">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path><circle cx="12" cy="13" r="4"></circle></svg>
+                    </div>
+                    <div class="circular-progress" id="avatarProgress" style="display: none;">
+                        <svg viewBox="0 0 36 36">
+                            <path class="circle-bg" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
+                            <path class="circle" id="progressPath" stroke-dasharray="0, 100" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
+                        </svg>
+                    </div>
+                </label>
+                <input type="file" id="avatarUpload" accept="image/*" style="display: none;">
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="fullName">Full Name <span style="color:var(--error)">*</span></label>
+                    <input type="text" id="fullName" required placeholder="John Doe">
+                </div>
+                <div class="form-group">
+                    <label for="phoneNo">Phone Number <span style="color:var(--error)">*</span></label>
+                    <input type="tel" id="phoneNo" required placeholder="+1 234 567 8900">
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="dob">Date of Birth</label>
+                <input type="date" id="dob">
+            </div>
+
+            <div class="form-group">
+                <label>Where do you write/publish? (Select all that apply)</label>
+                <div class="platform-group">
+                    <label class="platform-label"><input type="checkbox" name="platform" value="Wattpad"> <span>Wattpad</span></label>
+                    <label class="platform-label"><input type="checkbox" name="platform" value="AO3"> <span>AO3</span></label>
+                    <label class="platform-label"><input type="checkbox" name="platform" value="Fanfiction.net"> <span>Fanfiction.net</span></label>
+                    <label class="platform-label"><input type="checkbox" name="platform" value="WebNovel"> <span>WebNovel</span></label>
+                    <label class="platform-label"><input type="checkbox" name="platform" value="Physical Published"> <span>Physical Published</span></label>
+                    <label class="platform-label"><input type="checkbox" name="platform" value="Other"> <span>Other</span></label>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label>Social Media Links</label>
+                <div style="display:flex; flex-direction:column; gap:10px;">
+                    <input type="url" id="socialTwitter" placeholder="Twitter / X Profile URL">
+                    <input type="url" id="socialInsta" placeholder="Instagram Profile URL">
+                    <input type="url" id="socialWebsite" placeholder="Personal Website or Linktree">
+                </div>
+            </div>
+
+            <div class="agreements">
+                <label class="checkbox-label">
+                    <input type="checkbox" id="agreeTerms" required>
+                    <span>I understand and agree to the Privacy Policy and Terms of Condition. <span style="color:var(--error)">*</span></span>
+                </label>
+                <label class="checkbox-label">
+                    <input type="checkbox" id="agreeEmails">
+                    <span>I want to receive emails about new updates and features.</span>
+                </label>
+            </div>
+
+            <button type="submit" class="btn btn-full btn-large">Complete Onboarding</button>
+        </form>
+    </div>
+
+    <script src="/js/app.js"></script>
+    <script>
+        // Avatar upload preview logic
+        const avatarUpload = document.getElementById('avatarUpload');
+        const avatarImg = document.getElementById('avatarImg');
+        const avatarPlaceholder = document.getElementById('avatarPlaceholder');
+
+        let croppedAvatarBlob = null;
+
+        avatarUpload.addEventListener('change', async function(e) {
+            let file = e.target.files[0];
+            if (file) {
+                try {
+                    if (window.openImageCropper) {
+                        file = await window.openImageCropper(file, 1);
+                        croppedAvatarBlob = file;
+                    }
+                } catch(err) {
+                    console.log('Cropping cancelled', err);
+                    avatarUpload.value = '';
+                    return;
+                }
+
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const avatarProgress = document.getElementById('avatarProgress');
+                    const progressPath = document.getElementById('progressPath');
+                    const overlay = document.querySelector('.avatar-overlay');
+                    
+                    // Show progress UI
+                    avatarProgress.style.display = 'flex';
+                    overlay.style.display = 'none';
+                    avatarPlaceholder.style.display = 'none';
+                    avatarImg.style.display = 'none';
+                    
+                    let progress = 0;
+                    const interval = setInterval(() => {
+                        progress += Math.random() * 20 + 5;
+                        if (progress >= 100) {
+                            progress = 100;
+                            clearInterval(interval);
+                            setTimeout(() => {
+                                avatarProgress.style.display = 'none';
+                                avatarImg.src = e.target.result;
+                                avatarImg.style.display = 'block';
+                                overlay.style.display = ''; // restore camera overlay style
+                            }, 300);
+                        }
+                        progressPath.setAttribute('stroke-dasharray', `${progress}, 100`);
+                    }, 100);
+                }
+                reader.readAsDataURL(file);
+            }
+        });
+
+        // Form submission logic
+        document.getElementById('onboardingForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const btn = e.target.querySelector('button[type="submit"]');
+            btn.disabled = true;
+            btn.textContent = 'Saving...';
+            
+            // Collect form data
+            const fullName = document.getElementById('fullName').value;
+            const phoneNo = document.getElementById('phoneNo').value;
+            const dob = document.getElementById('dob').value;
+            const socialTwitter = document.getElementById('socialTwitter').value;
+            const socialInsta = document.getElementById('socialInsta').value;
+            const socialWebsite = document.getElementById('socialWebsite').value;
+            
+            // Collect selected platforms
+            const platformCheckboxes = document.querySelectorAll('input[name="platform"]:checked');
+            const platforms = Array.from(platformCheckboxes).map(cb => cb.value).join(', ');
+
+            const payload = {
+                full_name: fullName,
+                phone_no: phoneNo,
+                dob: dob,
+                platforms: platforms,
+                social_twitter: socialTwitter,
+                social_insta: socialInsta,
+                social_website: socialWebsite
+            };
+            
+            try {
+                const token = localStorage.getItem('token') || sessionStorage.getItem('token');
+                const response = await fetch('/api/auth/users/me', {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify(payload)
+                });
+                
+                if (response.ok) {
+                    if (croppedAvatarBlob) {
+                        const formData = new FormData();
+                        formData.append('file', croppedAvatarBlob);
+                        await fetch('/api/auth/profile/upload', {
+                            method: 'POST',
+                            headers: { 'Authorization': `Bearer ${token}` },
+                            body: formData
+                        });
+                    }
+                    window.location.href = '/dashboard.html';
+                } else {
+                    alert('Error saving profile. Please try again.');
+                    btn.disabled = false;
+                    btn.textContent = 'Complete Onboarding';
+                }
+            } catch (err) {
+                console.error(err);
+                alert('Network error. Please try again.');
+                btn.disabled = false;
+                btn.textContent = 'Complete Onboarding';
+            }
+        });
+    </script>
+    <script src="/js/pwa.js"></script>
+</body>
+</html>

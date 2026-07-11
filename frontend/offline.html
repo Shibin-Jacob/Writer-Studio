@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Writer Studio - Offline</title>
+    <link rel="icon" type="image/png" href="/img/logo-circle.png">
+    <style>
+        :root {
+            --bg-light: #f8fafc;
+            --surface-light: #ffffff;
+            --text-dark: #0f172a;
+            --text-muted-light: #64748b;
+            --border-light: #e2e8f0;
+            --bg-dark: #0a0e27;
+            --surface-dark: #0f172a;
+            --primary: #3b82f6;
+            --primary-hover: #2563eb;
+            --text-light: #f8fafc;
+            --text-muted-dark: #94a3b8;
+            --border-dark: rgba(255, 255, 255, 0.1);
+        }
+        body {
+            background-color: var(--bg-light);
+            color: var(--text-dark);
+            font-family: system-ui, -apple-system, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+            text-align: center;
+            padding: 0 20px;
+        }
+        .container {
+            background: var(--surface-light);
+            padding: 40px;
+            border-radius: 16px;
+            border: 1px solid var(--border-light);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            max-width: 400px;
+            width: 100%;
+        }
+        .logo {
+            width: 80px;
+            height: auto;
+            margin-bottom: 24px;
+        }
+        h1 {
+            font-size: 1.8rem;
+            margin: 0 0 12px 0;
+        }
+        p {
+            font-size: 1.1rem;
+            color: var(--text-muted-light);
+            margin: 0 0 32px 0;
+            line-height: 1.5;
+        }
+        .btn {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 14px 28px;
+            border-radius: 24px;
+            font-size: 1rem;
+            font-weight: 500;
+            cursor: pointer;
+            text-decoration: none;
+            transition: background 0.3s;
+            width: 100%;
+            display: inline-block;
+            box-sizing: border-box;
+        }
+        .btn:hover {
+            background: var(--primary-hover);
+        }
+        body.dark {
+            background-color: var(--bg-dark);
+            color: var(--text-light);
+        }
+        body.dark .container {
+            background: var(--surface-dark);
+            border: 1px solid var(--border-dark);
+        }
+        body.dark p {
+            color: var(--text-muted-dark);
+        }
+        
+        /* Theme toggle button */
+        .icon-btn {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: none;
+            border: none;
+            color: inherit;
+            cursor: pointer;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .icon-btn:hover {
+            background: rgba(128, 128, 128, 0.1);
+        }
+    </style>
+</head>
+<body>
+    <button class="icon-btn" id="themeToggleBtn" aria-label="Toggle Theme">
+        <svg id="moonIcon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display: none;"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
+        <svg id="sunIcon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>
+    </button>
+    <div class="container">
+        <img src="/img/logo-nopadding.png" alt="Writer Studio Logo" class="logo">
+        <h1>You are Offline</h1>
+        <p>It seems you've lost your internet connection. Please check your network to continue using Writer Studio.</p>
+        <button class="btn" onclick="window.location.reload()">Retry Connection</button>
+    </div>
+
+    <script>
+        const savedTheme = localStorage.getItem('theme');
+        const prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+        const moonIcon = document.getElementById('moonIcon');
+        const sunIcon = document.getElementById('sunIcon');
+        
+        function applyTheme(isDark) {
+            if (isDark) {
+                document.body.classList.add('dark');
+                moonIcon.style.display = 'block';
+                sunIcon.style.display = 'none';
+            } else {
+                document.body.classList.remove('dark');
+                moonIcon.style.display = 'none';
+                sunIcon.style.display = 'block';
+            }
+        }
+        
+        // Initial load
+        applyTheme(savedTheme === 'dark' || (!savedTheme && prefersDark));
+        
+        // Toggle theme
+        document.getElementById('themeToggleBtn').addEventListener('click', () => {
+            const isDark = !document.body.classList.contains('dark');
+            applyTheme(isDark);
+            localStorage.setItem('theme', isDark ? 'dark' : 'light');
+        });
+    </script>
+</body>
+</html>

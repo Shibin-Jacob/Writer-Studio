@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Writer Studio - Workspace</title>
+    <link rel="stylesheet" href="/css/style.css?v=7">
+    <link rel="stylesheet" href="/css/workspace.css?v=1">
+    <link rel="icon" type="image/png" href="/img/logo-circle.png">
+    <link rel="manifest" href="/manifest.json">
+</head>
+<body class="dark">
+    <!-- Top Navbar -->
+    <header class="top-navbar">
+        <a href="/dashboard.html" class="navbar-brand">
+            <img src="/img/logo-nopadding.png" alt="Writer Studio Logo" style="height: 32px; margin-right: 8px; vertical-align: middle;">
+            Writer Studio
+        </a>
+        <div class="navbar-actions">
+            <button class="icon-btn" id="themeToggleBtn" aria-label="Toggle Theme">
+                <svg id="moonIcon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
+                <svg id="sunIcon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display: none;"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>
+            </button>
+            <a href="/profile.html" class="profile-circle" id="profileCircle" title="Profile" style="text-decoration: none;">
+                <span id="profileInitial">U</span>
+            </a>
+        </div>
+    </header>
+
+    <div class="layout-container">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <a href="#" id="backToInfo" class="nav-item" style="color: var(--text-muted);">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
+                Back to Story Details
+            </a>
+            <div style="height: 1px; background: var(--border); margin: 8px 16px 16px 16px;"></div>
+            
+            <div class="nav-item active" onclick="switchTab('chapters')" id="nav-chapters">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+                Chapters
+            </div>
+            <div class="nav-item" onclick="switchTab('notes')" id="nav-notes">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"></path><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path></svg>
+                Main Notes
+            </div>
+            <div class="nav-item" onclick="switchTab('storyboard')" id="nav-storyboard">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><rect x="7" y="7" width="3" height="9"></rect><rect x="14" y="7" width="3" height="5"></rect></svg>
+                Storyboard
+            </div>
+            <div class="nav-item" onclick="switchTab('characters')" id="nav-characters">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+                Characters
+            </div>
+            <div class="nav-item" onclick="switchTab('scenes')" id="nav-scenes">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="7" width="20" height="15" rx="2" ry="2"></rect><polyline points="17 2 12 7 7 2"></polyline></svg>
+                Scenes
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Chapters View -->
+            <div id="view-chapters" class="view-panel padded-view active">
+                <div class="chapters-header">
+                    <h2>Chapters</h2>
+                    <button class="btn" style="padding: 10px 20px; font-size: 1rem;" onclick="createNewChapter()">+ New Chapter</button>
+                </div>
+                <div class="chapter-list" id="chapterList">
+                    <p style="color: var(--text-muted); font-style: italic;">Loading chapters...</p>
+                </div>
+            </div>
+
+            <!-- Notes View -->
+            <div id="view-notes" class="view-panel split-pane-view">
+                <!-- Left Pane: Notes List -->
+                <div class="split-sidebar">
+                    <div class="split-sidebar-header">
+                        <select id="notesCategoryFilter" class="filter-select">
+                            <option value="All">All Notes</option>
+                            <option value="Characters">Characters</option>
+                            <option value="Locations">Locations</option>
+                            <option value="Lore">Lore</option>
+                            <option value="General">General</option>
+                        </select>
+                        <button class="btn btn-sm btn-primary" onclick="createNewNote()">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+                            Note
+                        </button>
+                    </div>
+                    <div id="notesList" class="split-sidebar-list">
+                        <div class="empty-state-list">Loading notes...</div>
+                    </div>
+                </div>
+                
+                <!-- Right Pane: Note Editor -->
+                <div class="split-main">
+                    <div id="noteEditorEmpty" class="placeholder-state empty-editor-state">
+                        <div class="icon-circle">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"></path><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path></svg>
+                        </div>
+                        <h3>No Note Selected</h3>
+                        <p>Select a note from the library or create a new one to start writing.</p>
+                    </div>
+                    <div id="noteEditorForm" class="note-editor-container hidden">
+                        <div class="note-editor-header">
+                            <input type="text" id="noteTitle" class="invisible-input note-title-input" placeholder="Untitled Note">
+                            <div class="note-actions">
+                                <span id="noteSaveStatus" class="save-status">
+                                    <svg class="status-icon" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                                    <span>Saved</span>
+                                </span>
+                                <div class="separator-vertical"></div>
+                                <select id="noteCategory" class="filter-select minimal-select" onchange="autoSaveNote()">
+                                    <option value="Characters">Characters</option>
+                                    <option value="Locations">Locations</option>
+                                    <option value="Lore">Lore</option>
+                                    <option value="General">General</option>
+                                </select>
+                                <button class="note-btn-icon btn-danger-icon" onclick="deleteCurrentNote()" title="Delete Note">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
+                                </button>
+                            </div>
+                        </div>
+                        <textarea id="noteContent" class="note-textarea" placeholder="Start writing..."></textarea>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Storyboard View -->
+            <div id="view-storyboard" class="view-panel" style="display: flex; flex-direction: column;">
+                <div class="storyboard-header" style="padding: 20px 40px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; background: var(--surface); z-index: 10;">
+                    <div style="display: flex; gap: 10px; align-items: center;">
+                        <h2 style="margin: 0; font-size: 1.5rem; margin-right: 20px;">Storyboard</h2>
+                        <div class="toggle-group" style="display: flex; background: var(--bg-color); border-radius: 6px; padding: 4px; border: 1px solid var(--border);">
+                            <button id="btnViewBoard" class="btn btn-sm active" style="background: var(--surface); color: var(--text-color); border: none; box-shadow: 0 1px 3px rgba(0,0,0,0.1); margin: 5px;" onclick="toggleStoryboardView('board')">Board</button>
+                            <button id="btnViewTimeline" class="btn btn-sm" style="background: transparent; color: var(--text-muted); border: none; margin: 5px;" onclick="toggleStoryboardView('timeline')">Timeline</button>
+                        </div>
+                    </div>
+                    <div>
+                        <button id="btnAddBoardCard" class="btn btn-primary" onclick="addStoryboardCard()">+ Add Card</button>
+                        <button id="btnAddTimelineEvent" class="btn btn-primary hidden" onclick="openTimelineEventModal()">+ Add Event</button>
+                    </div>
+                </div>
+                
+                <!-- Board View -->
+                <div id="storyboardCanvasContainer" style="flex: 1; overflow: auto; position: relative; background-image: radial-gradient(var(--border) 1px, transparent 1px); background-size: 20px 20px;">
+                    <div id="storyboardCanvas" style="width: 5000px; height: 5000px; position: relative;">
+                        <!-- Cards added dynamically -->
+                    </div>
+                </div>
+                
+                <!-- Timeline View -->
+                <div id="storyboardTimelineContainer" class="hidden" style="flex: 1; overflow-y: auto; padding: 40px;">
+                    <div style="max-width: 800px; margin: 0 auto; position: relative;">
+                        <div style="position: absolute; left: 50px; top: 0; bottom: 0; width: 2px; background: var(--border);"></div>
+                        <div id="timelineEventsList">
+                            <!-- Events added dynamically -->
+                            <div class="placeholder-state" style="margin-top: 40px;">
+                                <p>Timeline events coming soon.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Characters View -->
+            <div id="view-characters" class="view-panel split-pane-view">
+                <!-- Left Pane: Characters List -->
+                <div class="split-sidebar">
+                    <div class="split-sidebar-header">
+                        <div class="custom-search-container" style="flex: 1;">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+                            <input type="text" id="characterSearch" class="custom-search-input" style="width:70%" placeholder="Search characters...">
+                        </div>
+                        <button class="btn btn-sm btn-primary" onclick="createNewCharacter()">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+                        </button>
+                    </div>
+                    <div id="characterList" class="split-sidebar-list">
+                        <div class="empty-state-list">Loading characters...</div>
+                    </div>
+                </div>
+                
+                <!-- Right Pane: Character Profile -->
+                <div class="split-main" style="background: var(--bg-color);">
+                    <div id="characterEditorEmpty" class="placeholder-state empty-editor-state" style="flex: 1;">
+                        <div class="icon-circle">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+                        </div>
+                        <h3>No Character Selected</h3>
+                        <p>Select a character from the roster or add a new one.</p>
+                    </div>
+                    
+                    <div id="characterEditorForm" class="character-editor-container hidden" style="padding: 40px; max-width: 900px; margin: 0 auto; width: 100%; flex: 1; overflow-y: auto;">
+                        <div class="character-profile-header">
+                            <div class="avatar-upload-circle" onclick="document.getElementById('charAvatarInput').click()">
+                                <img id="charAvatarPreview" src="/assets/default_avatar.svg" alt="Avatar" onerror="this.src='data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\' width=\'100%\' height=\'100%\' fill=\'#ccc\'><circle cx=\'50%\' cy=\'50%\' r=\'40\'/></svg>'">
+                                <input type="file" id="charAvatarInput" style="display: none" accept="image/*">
+                            </div>
+                            <div class="profile-title-area" style="flex: 1;">
+                                <input type="text" id="charName" class="invisible-input" style="font-size: 2.5rem; font-weight: 700; margin-bottom: 8px;" placeholder="Character Name" onchange="autoSaveCharacter()">
+                                <input type="text" id="charAliases" class="invisible-input" style="font-size: 1.1rem; color: var(--text-muted);" placeholder="Aliases / Titles" onchange="autoSaveCharacter()">
+                            </div>
+                            <div class="note-actions">
+                                <span id="charSaveStatus" class="save-status"></span>
+                                <button class="btn btn-sm btn-danger" onclick="deleteCurrentCharacter()">Delete</button>
+                            </div>
+                        </div>
+                        
+                        <div class="character-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-top: 32px;">
+                            <div class="form-group">
+                                <label>Role in Story</label>
+                                <input type="text" id="charRole" class="form-control" placeholder="e.g. Protagonist, Mentor" onchange="autoSaveCharacter()">
+                            </div>
+                            <div class="form-group">
+                                <label>Date of Birth / Age</label>
+                                <input type="text" id="charDob" class="form-control" onchange="autoSaveCharacter()">
+                            </div>
+                            
+                            <div class="form-group" style="grid-column: 1 / -1;">
+                                <label>Physical Description</label>
+                                <textarea id="charPhysical" class="form-control" rows="3" onchange="autoSaveCharacter()"></textarea>
+                            </div>
+                            
+                            <div class="form-group" style="grid-column: 1 / -1;">
+                                <label>Personality & Traits</label>
+                                <textarea id="charPersonality" class="form-control" rows="3" onchange="autoSaveCharacter()"></textarea>
+                            </div>
+                            
+                            <div class="form-group" style="grid-column: 1 / -1;">
+                                <label>Backstory</label>
+                                <textarea id="charBackstory" class="form-control" rows="4" onchange="autoSaveCharacter()"></textarea>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label>Goals & Motivations</label>
+                                <textarea id="charGoals" class="form-control" rows="4" onchange="autoSaveCharacter()"></textarea>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label>Conflicts & Flaws</label>
+                                <textarea id="charConflicts" class="form-control" rows="4" onchange="autoSaveCharacter()"></textarea>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Scenes View -->
+            <div id="view-scenes" class="view-panel split-pane-view">
+                <!-- Left Pane: Scenes List -->
+                <div class="split-sidebar">
+                    <div class="split-sidebar-header">
+                        <select id="scenesChapterFilter" class="filter-select">
+                            <option value="All">All Chapters</option>
+                            <!-- Chapters loaded dynamically -->
+                        </select>
+                        <button class="btn btn-sm btn-primary" onclick="createNewScene()">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+                        </button>
+                    </div>
+                    <div id="sceneList" class="split-sidebar-list">
+                        <div class="empty-state-list">Loading scenes...</div>
+                    </div>
+                </div>
+                
+                <!-- Right Pane: Scene Editor -->
+                <div class="split-main" style="background: var(--bg-color);">
+                    <div id="sceneEditorEmpty" class="placeholder-state empty-editor-state" style="flex: 1;">
+                        <div class="icon-circle">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+                        </div>
+                        <h3>No Scene Selected</h3>
+                        <p>Select a scene from the list or create a new one.</p>
+                    </div>
+                    
+                    <div id="sceneEditorForm" class="scene-editor-container hidden" style="padding: 40px; max-width: 900px; margin: 0 auto; width: 100%; flex: 1; overflow-y: auto;">
+                        <div class="scene-editor-header" style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 24px;">
+                            <div style="flex: 1;">
+                                <input type="text" id="sceneTitle" class="invisible-input" style="font-size: 2rem; font-weight: 700; width: 100%;" placeholder="Scene Title" onchange="autoSaveScene()">
+                            </div>
+                            <div class="note-actions">
+                                <span id="sceneSaveStatus" class="save-status"></span>
+                                <button class="btn btn-sm btn-danger" onclick="deleteCurrentScene()">Delete</button>
+                            </div>
+                        </div>
+                        
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px;">
+                            <div class="form-group">
+                                <label>Assign to Chapter (Optional)</label>
+                                <select id="sceneChapterSelect" class="form-control" onchange="autoSaveScene()">
+                                    <option value="">-- No Chapter --</option>
+                                    <!-- Dynamic -->
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>Status</label>
+                                <select id="sceneStatus" class="form-control" onchange="autoSaveScene()">
+                                    <option value="Outline">Outline</option>
+                                    <option value="Draft">Draft</option>
+                                    <option value="Needs Rewrite">Needs Rewrite</option>
+                                    <option value="Completed">Completed</option>
+                                </select>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label>Setting / Location</label>
+                                <input type="text" id="sceneSetting" class="form-control" onchange="autoSaveScene()">
+                            </div>
+                            <div class="form-group">
+                                <label>POV Character</label>
+                                <input type="text" id="scenePov" class="form-control" onchange="autoSaveScene()">
+                            </div>
+                            
+                            <div class="form-group" style="grid-column: 1 / -1;">
+                                <label>Scene Description & Action</label>
+                                <textarea id="sceneDescription" class="form-control" rows="10" onchange="autoSaveScene()"></textarea>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Timeline Event Modal -->
+    <div id="timelineEventModal" class="modal-overlay hidden">
+        <div class="modal-content">
+            <h3 id="timelineEventModalTitle">Add Timeline Event</h3>
+            <div class="form-group">
+                <label>Event Title</label>
+                <input type="text" id="timelineTitleInput" class="form-control" placeholder="E.g., The Great War">
+            </div>
+            <div class="form-group">
+                <label>Event Date</label>
+                <input type="text" id="timelineDateInput" class="form-control" placeholder="E.g., Year 1000, 15th of Spring">
+            </div>
+            <div class="form-group">
+                <label>Importance</label>
+                <select id="timelineImportanceInput" class="form-control">
+                    <option value="Normal">Normal</option>
+                    <option value="Major">Major</option>
+                    <option value="Minor">Minor</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Description</label>
+                <textarea id="timelineDescriptionInput" class="form-control" rows="4" placeholder="Describe the event..."></textarea>
+            </div>
+            <div style="display: flex; justify-content: flex-end; gap: 12px; margin-top: 24px;">
+                <button class="btn btn-secondary" onclick="closeTimelineEventModal()">Cancel</button>
+                <button class="btn btn-primary" onclick="saveTimelineEvent()">Save Event</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Theme Logic -->
+    <script>
+        const savedTheme = localStorage.getItem('theme');
+        const prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+        if (savedTheme === 'light' || (!savedTheme && !prefersDark)) {
+            document.body.classList.remove('dark');
+        }
+    </script>
+    <script src="/js/workspace.js?v=9"></script>
+    <script src="/js/pwa.js"></script>
+</body>
+</html>

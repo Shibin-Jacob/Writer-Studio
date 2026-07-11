@@ -1,0 +1,427 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Extension Manager - Writer Studio</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="icon" type="image/png" href="/img/logo-circle.png">
+    <link rel="manifest" href="/manifest.json">
+    <style>
+        body { 
+            margin: 0; padding: 0; 
+            background-color: var(--bg-color); 
+            min-height: 100vh;
+        }
+
+        /* Top Navbar */
+        .top-navbar {
+            height: 64px;
+            background: var(--surface);
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            padding: 0 24px;
+            justify-content: space-between;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        body.dark .top-navbar { background: rgba(10, 14, 39, 0.5); backdrop-filter: blur(10px); }
+        .navbar-brand { display: flex; align-items: center; gap: 12px; font-size: 1.25rem; font-weight: 700; color: var(--text-color); text-decoration: none; }
+        .nav-back { display: flex; align-items: center; gap: 8px; color: var(--text-muted); text-decoration: none; font-weight: 500; transition: color 0.2s; }
+        .nav-back:hover { color: var(--accent-color); }
+        
+        .navbar-actions { display: flex; align-items: center; gap: 16px; }
+        .icon-btn { background: none; border: none; color: var(--text-color); cursor: pointer; width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; transition: background 0.2s; }
+        .icon-btn:hover { background: rgba(128, 128, 128, 0.1); }
+
+        /* Main Container */
+        .ext-container {
+            max-width: 1000px;
+            margin: 40px auto;
+            padding: 0 24px;
+        }
+
+        .page-header {
+            margin-bottom: 32px;
+        }
+        .page-header h1 {
+            font-size: 2rem;
+            margin: 0 0 8px 0;
+        }
+        .page-header p {
+            color: var(--text-muted);
+            margin: 0;
+        }
+
+        /* Upload Area */
+        .upload-area {
+            border: 2px dashed var(--border);
+            border-radius: 16px;
+            padding: 48px 24px;
+            text-align: center;
+            background: var(--surface);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            cursor: pointer;
+            margin-bottom: 48px;
+            position: relative;
+            overflow: hidden;
+        }
+        .upload-area::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: linear-gradient(135deg, rgba(59, 116, 148, 0.1) 0%, rgba(59, 116, 148, 0.02) 100%);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        .upload-area:hover {
+            border-color: var(--accent-color);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.04);
+        }
+        .upload-area:hover::before { opacity: 1; }
+        .upload-area > * { position: relative; z-index: 1; }
+        
+        .upload-icon {
+            width: 48px;
+            height: 48px;
+            color: var(--accent-color);
+            margin-bottom: 16px;
+            opacity: 0.8;
+            transition: transform 0.3s ease;
+        }
+        .upload-area:hover .upload-icon {
+            transform: scale(1.1);
+            opacity: 1;
+        }
+        .upload-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin: 0 0 8px 0;
+        }
+        .upload-subtitle {
+            color: var(--text-muted);
+            font-size: 0.95rem;
+            margin: 0;
+        }
+        #fileInput { display: none; }
+
+        /* Grid */
+        .ext-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 24px;
+        }
+
+        /* Extension Card */
+        .ext-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 24px;
+            display: flex;
+            flex-direction: column;
+            transition: all 0.2s ease;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.02);
+        }
+        .ext-card:hover {
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.06);
+            transform: translateY(-2px);
+            border-color: rgba(59, 116, 148, 0.3);
+        }
+        
+        .ext-header {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            margin-bottom: 16px;
+        }
+        .ext-info-top {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .ext-icon {
+            width: 40px;
+            height: 40px;
+            background: rgba(59, 116, 148, 0.1);
+            color: var(--accent-color);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .ext-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin: 0;
+            color: var(--text-color);
+        }
+        .delete-btn {
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            cursor: pointer;
+            padding: 8px;
+            border-radius: 8px;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .delete-btn:hover {
+            background: rgba(229, 57, 53, 0.1);
+            color: #e53935;
+        }
+        
+        .ext-description {
+            color: var(--text-muted);
+            font-size: 0.95rem;
+            line-height: 1.5;
+            margin: 0 0 20px 0;
+            flex: 1;
+        }
+        
+        .ext-footer {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding-top: 16px;
+            border-top: 1px solid var(--border);
+        }
+        .status-label {
+            font-size: 0.85rem;
+            font-weight: 500;
+            color: var(--text-muted);
+        }
+
+        /* Toggle Switch (Visual Only for now) */
+        .toggle-switch {
+            position: relative;
+            display: inline-block;
+            width: 44px;
+            height: 24px;
+        }
+        .toggle-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+        .slider {
+            position: absolute;
+            cursor: not-allowed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background-color: var(--border);
+            transition: .3s;
+            border-radius: 24px;
+        }
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 18px;
+            width: 18px;
+            left: 3px;
+            bottom: 3px;
+            background-color: white;
+            transition: .3s;
+            border-radius: 50%;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
+        input:checked + .slider {
+            background-color: #10b981;
+        }
+        input:checked + .slider:before {
+            transform: translateX(20px);
+        }
+
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 64px 24px;
+            background: var(--surface);
+            border: 1px dashed var(--border);
+            border-radius: 16px;
+            color: var(--text-muted);
+        }
+        .empty-state svg {
+            width: 64px;
+            height: 64px;
+            opacity: 0.3;
+            margin-bottom: 16px;
+        }
+        .empty-state h3 { margin: 0 0 8px 0; font-size: 1.25rem; color: var(--text-color); }
+        .empty-state p { margin: 0; max-width: 400px; margin: 0 auto; }
+    </style>
+</head>
+<body>
+    
+    <!-- Top Navbar -->
+    <div class="top-navbar">
+        <a href="/dashboard.html" class="nav-back">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
+            Dashboard
+        </a>
+        <div class="navbar-actions">
+            <button class="icon-btn" onclick="toggleTheme()" title="Toggle Theme">
+                <svg id="moonIcon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:none;"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
+                <svg id="sunIcon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>
+            </button>
+        </div>
+    </div>
+
+    <div class="ext-container">
+        
+        <div class="page-header">
+            <h1>Extension Manager</h1>
+            <p>Enhance your workspace with powerful tools and features.</p>
+        </div>
+        
+        <div class="upload-area" onclick="document.getElementById('fileInput').click()">
+            <svg class="upload-icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><line x1="12" y1="8" x2="12" y2="16"></line><line x1="8" y1="12" x2="16" y2="12"></line></svg>
+            <h3 class="upload-title">Install New Extension</h3>
+            <p class="upload-subtitle">Drag and drop a .wext file here, or click to browse.</p>
+            <input type="file" id="fileInput" accept=".wext" onchange="handleFileUpload(event)">
+        </div>
+        
+        <div class="ext-list" id="extList">
+            <!-- Loaded via JS -->
+            <div style="grid-column: 1 / -1; text-align: center; padding: 40px; color: var(--text-muted);">
+                Loading extensions...
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const token = localStorage.getItem('token') || sessionStorage.getItem('token');
+        if (!token) window.location.href = '/index.html';
+
+        // Theme Toggle logic
+        function toggleTheme() {
+            document.body.classList.toggle('dark');
+            const isDark = document.body.classList.contains('dark');
+            localStorage.setItem('theme', isDark ? 'dark' : 'light');
+            updateThemeIcons();
+        }
+        function updateThemeIcons() {
+            const isDark = document.body.classList.contains('dark');
+            document.getElementById('moonIcon').style.display = isDark ? 'none' : 'block';
+            document.getElementById('sunIcon').style.display = isDark ? 'block' : 'none';
+        }
+        if (localStorage.getItem('theme') === 'dark') {
+            document.body.classList.add('dark');
+        }
+        updateThemeIcons();
+
+
+        async function loadExtensions() {
+            try {
+                const res = await fetch(`/api/extensions/`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                const exts = await res.json();
+                const list = document.getElementById('extList');
+                list.innerHTML = '';
+                
+                if (exts.length === 0) {
+                    list.innerHTML = `
+                        <div class="empty-state" style="grid-column: 1 / -1;">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><path d="M10.9 14 11 14.1"></path><path d="m15.1 14-.1.1"></path><path d="M9 16.5c1.5 1.5 4.5 1.5 6 0"></path></svg>
+                            <h3>No Extensions Installed</h3>
+                            <p>Enhance your writing experience by installing .wext extension files using the upload area above.</p>
+                        </div>
+                    `;
+                    return;
+                }
+                
+                exts.forEach(e => {
+                    // Fallback to puzzle icon if no specific icon
+                    const iconSvg = `<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19.439 7.85c-.049.322.059.648.289.878l1.568 1.568c.47.47.706 1.087.706 1.704s-.235 1.233-.706 1.704l-1.611 1.611a.98.98 0 0 1-.837.276c-.47-.07-.802-.48-.968-.925a2.501 2.501 0 1 0-3.214 3.214c.446.166.855.497.925.968a.979.979 0 0 1-.276.837l-1.61 1.611c-.94.94-2.469.94-3.408 0L8.73 19.73a.98.98 0 0 1-.276-.837c.07-.47.48-.802.925-.968a2.5 2.5 0 1 0-3.214-3.214c-.166-.446-.497-.855-.968-.925a.979.979 0 0 1-.837.276L2.748 15.67c-.94-.94-.94-2.469 0-3.408l1.611-1.611a.98.98 0 0 1 .837-.276c.47.07.802.48.925.968a2.5 2.5 0 1 0 3.214-3.214c-.446-.166-.855-.497-.925-.968a.979.979 0 0 1 .276-.837l1.61-1.611c.94-.94 2.469-.94 3.408 0l1.568 1.568c.23.23.556.338.878.289.479-.074.921-.362 1.189-.806a2.5 2.5 0 1 0 4.298 2.518c-.282-.53-.254-1.186.155-1.595z"></path></svg>`;
+
+                    list.innerHTML += `
+                        <div class="ext-card">
+                            <div class="ext-header">
+                                <div class="ext-info-top">
+                                    <div class="ext-icon">${iconSvg}</div>
+                                    <h3 class="ext-title">${e.name}</h3>
+                                </div>
+                                <button class="delete-btn" onclick="deleteExtension(${e.id})" title="Remove Extension">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
+                                </button>
+                            </div>
+                            <p class="ext-description">${e.description || 'No description provided.'}</p>
+                            
+                            <div class="ext-footer">
+                                <span class="status-label">${e.is_active ? 'Active' : 'Inactive'}</span>
+                                <label class="toggle-switch">
+                                    <input type="checkbox" ${e.is_active ? 'checked' : ''} disabled>
+                                    <span class="slider"></span>
+                                </label>
+                            </div>
+                        </div>
+                    `;
+                });
+            } catch (e) {
+                console.error(e);
+            }
+        }
+        
+        async function handleFileUpload(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            
+            const formData = new FormData();
+            formData.append('file', file);
+            formData.append('password', '');
+            
+            try {
+                const response = await fetch('/api/extensions/upload', {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: formData
+                });
+                
+                const result = await response.json();
+                if (response.ok) {
+                    loadExtensions();
+                } else {
+                    alert("Error: " + result.detail);
+                }
+            } catch (err) {
+                console.error(err);
+                alert("Upload failed.");
+            }
+            
+            event.target.value = ''; 
+        }
+        
+        async function deleteExtension(id) {
+            if(!confirm("Are you sure you want to remove this extension?")) return;
+            
+            try {
+                const response = await fetch(`/api/extensions/${id}`, {
+                    method: 'DELETE',
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+                
+                if (response.ok) {
+                    loadExtensions();
+                } else {
+                    alert("Failed to delete extension.");
+                }
+            } catch (err) {
+                console.error(err);
+            }
+        }
+
+        // Init
+        loadExtensions();
+    </script>
+    <script src="/js/pwa.js"></script>
+</body>
+</html>

@@ -1,0 +1,447 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Writer Studio - Dashboard</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="/css/dashboard.css?v=1">
+    <link rel="icon" type="image/png" href="/img/logo-circle.png">
+    <link rel="manifest" href="/manifest.json">
+</head>
+<body>
+    <!-- Theme Logic (Inline to avoid flash) -->
+    <script>
+        const savedTheme = localStorage.getItem('theme');
+        const prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+        if (savedTheme === 'dark' || (!savedTheme && prefersDark)) {
+            document.body.classList.add('dark');
+        }
+    </script>
+    <!-- Top Navbar -->
+    <header class="top-navbar">
+        <a href="/dashboard.html" class="navbar-brand">
+            <img src="/img/logo-nopadding.png" alt="Writer Studio Logo" style="height: 32px; margin-right: 8px; vertical-align: middle;">
+            Writer Studio
+        </a>
+        
+        <div class="navbar-actions" style="position: relative;">
+            <button class="icon-btn" id="themeToggleBtn" aria-label="Toggle Theme">
+                <svg id="moonIcon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
+                <svg id="sunIcon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display: none;"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>
+            </button>
+            <a href="/notifications.html" class="icon-btn" aria-label="Notifications" style="text-decoration: none; color: inherit;">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path><path d="M13.73 21a2 2 0 0 1-3.46 0"></path></svg>
+            </a>
+            <a href="/settings.html" class="icon-btn" aria-label="Settings" style="text-decoration: none; color: inherit;">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
+            </a>
+            <a href="/profile.html" class="profile-circle" id="profileCircle" style="text-decoration: none; color: inherit;">
+                <span id="profileInitial">U</span>
+                <img id="profileImage" src="" alt="" style="display: none;">
+            </a>
+        </div>
+    </header>
+
+    <div class="layout-container">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="nav-item" onclick="window.location.href='/dashboard.html'" id="nav-stories">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path></svg>
+                My Stories
+            </div>
+            <div class="nav-item" onclick="window.location.href='/dashboard.html'" id="nav-series">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><line x1="9" y1="3" x2="9" y2="21"></line></svg>
+                My Series
+            </div>
+            <div class="nav-item" onclick="window.location.href='/extensions.html'">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path><polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline><line x1="12" y1="22.08" x2="12" y2="12"></line></svg>
+                Extensions
+            </div>
+            <div style="flex:1;"></div>
+            <div class="nav-item logout-btn" onclick="logout()">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
+                Logout
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <div class="header">
+                <h1>My Profile</h1>
+            </div>
+            
+            <div style="display: flex; flex-direction: column; gap: 24px; margin-top: 20px;">
+                <!-- Profile Header Card -->
+                <div style="background: var(--surface-white); border: 1px solid var(--border-soft); border-radius: 16px; padding: 32px; box-shadow: 0 4px 16px rgba(0,0,0,0.02); display: flex; align-items: center;">
+                    <div style="position: relative; cursor: pointer;" onclick="document.getElementById('profilePhotoInput').click()">
+                        <div style="width: 100px; height: 100px; border-radius: 50%; background: linear-gradient(135deg, var(--brand-teal), var(--brand-teal-light)); display: flex; align-items: center; justify-content: center; color: white; font-size: 2.5rem; font-weight: 600; box-shadow: 0 4px 12px rgba(13, 148, 136, 0.2);" id="largeProfileInitial">
+                            U
+                        </div>
+                        <img id="largeProfileImage" src="" alt="Profile" style="width: 100px; height: 100px; border-radius: 50%; object-fit: cover; display: none; box-shadow: 0 4px 12px rgba(0,0,0,0.1);">
+                        <div style="position: absolute; bottom: 0; right: 0; background: var(--brand-teal); color: white; border-radius: 50%; width: 28px; height: 28px; display: flex; align-items: center; justify-content: center; border: 2px solid var(--surface-white);">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
+                        </div>
+                        <input type="file" id="profilePhotoInput" style="display: none;" accept="image/*" onchange="uploadProfilePhoto(event)">
+                    </div>
+                    <div style="margin-left: 24px;">
+                        <h2 style="margin: 0 0 8px 0; font-size: 1.75rem; font-weight: 700;" id="profileUsernameDisplay">Loading...</h2>
+                        <div style="color: var(--text-muted); display: flex; flex-direction: column; gap: 4px;">
+                            <span id="profileEmailDisplay">...</span>
+                            <div style="display: flex; align-items: center; gap: 6px; margin-top: 4px; font-size: 0.9rem;">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
+                                Joined <span id="profileJoinedDisplay">...</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Stats Grid -->
+                <h3 style="margin: 8px 0 0 0; font-size: 1.25rem;">Your Writing Stats</h3>
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px;">
+                    <div style="background: var(--surface-white); border: 1px solid var(--border-soft); border-radius: 12px; padding: 24px; display: flex; flex-direction: column; align-items: center; justify-content: center;">
+                        <span style="font-size: 2.5rem; font-weight: 700; color: var(--brand-teal);" id="statStories">0</span>
+                        <span style="color: var(--text-muted); font-size: 0.9rem; text-transform: uppercase; letter-spacing: 0.5px; font-weight: 600; margin-top: 4px;">Stories Created</span>
+                    </div>
+                    <div style="background: var(--surface-white); border: 1px solid var(--border-soft); border-radius: 12px; padding: 24px; display: flex; flex-direction: column; align-items: center; justify-content: center;">
+                        <span style="font-size: 2.5rem; font-weight: 700; color: #8b5cf6;" id="statSeries">0</span>
+                        <span style="color: var(--text-muted); font-size: 0.9rem; text-transform: uppercase; letter-spacing: 0.5px; font-weight: 600; margin-top: 4px;">Series Created</span>
+                    </div>
+                    <div style="background: var(--surface-white); border: 1px solid var(--border-soft); border-radius: 12px; padding: 24px; display: flex; flex-direction: column; align-items: center; justify-content: center;">
+                        <span style="font-size: 2.5rem; font-weight: 700; color: #f59e0b;" id="statCharacters">0</span>
+                        <span style="color: var(--text-muted); font-size: 0.9rem; text-transform: uppercase; letter-spacing: 0.5px; font-weight: 600; margin-top: 4px;">Characters</span>
+                    </div>
+                </div>
+
+                <div style="height: 32px;"></div>
+
+                <!-- Settings Forms Migrated -->
+                <div style="display: flex; flex-direction: column; gap: 32px;">
+                    
+                    <!-- Basic Info -->
+                    <div style="background: var(--surface-white); border: 1px solid var(--border-soft); border-radius: 12px; padding: 24px; box-shadow: 0 2px 12px rgba(0,0,0,0.02);">
+                        <h2 style="margin: 0 0 20px 0; font-size: 1.25rem;">Basic Information</h2>
+                        <div id="basicInfoError" style="color: #ef4444; margin-bottom: 16px; font-size: 0.9rem; display: none;"></div>
+                        <div id="basicInfoSuccess" style="color: #10b981; margin-bottom: 16px; font-size: 0.9rem; display: none;"></div>
+                        
+                        <div class="form-group">
+                            <label>Username</label>
+                            <input type="text" id="settingsUsername" placeholder="Loading...">
+                        </div>
+                        <div class="form-group">
+                            <label>Email Address</label>
+                            <input type="email" id="settingsEmail" placeholder="Loading...">
+                        </div>
+                        <div class="form-group">
+                            <label>Full Name</label>
+                            <input type="text" id="settingsFullName" placeholder="E.g. John Doe">
+                        </div>
+                        <div class="form-group">
+                            <label>Date of Birth</label>
+                            <input type="date" id="settingsDob">
+                        </div>
+                        <div style="display: flex; justify-content: flex-end; margin-top: 16px;">
+                            <button class="btn" onclick="updateBasicInfo()">Save Changes</button>
+                        </div>
+                    </div>
+
+                    <!-- Change Password -->
+                    <div style="background: var(--surface-white); border: 1px solid var(--border-soft); border-radius: 12px; padding: 24px; box-shadow: 0 2px 12px rgba(0,0,0,0.02);">
+                        <h2 style="margin: 0 0 20px 0; font-size: 1.25rem;">Change Password</h2>
+                        <div id="pwdError" style="color: #ef4444; margin-bottom: 16px; font-size: 0.9rem; display: none;"></div>
+                        <div id="pwdSuccess" style="color: #10b981; margin-bottom: 16px; font-size: 0.9rem; display: none;"></div>
+                        
+                        <div class="form-group">
+                            <label>Current Password</label>
+                            <input type="password" id="currentPassword">
+                        </div>
+                        <div class="form-group">
+                            <label>New Password</label>
+                            <input type="password" id="newPassword">
+                        </div>
+                        <div class="form-group">
+                            <label>Confirm New Password</label>
+                            <input type="password" id="confirmNewPassword">
+                        </div>
+                        <div style="display: flex; justify-content: flex-end; margin-top: 16px;">
+                            <button class="btn" onclick="updatePassword()">Update Password</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Mobile Bottom Nav -->
+    <nav class="mobile-nav">
+        <div class="nav-item active" onclick="window.location.href='/dashboard.html'">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path></svg>
+            Stories
+        </div>
+        <div class="nav-item" onclick="window.location.href='/dashboard.html'">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><line x1="9" y1="3" x2="9" y2="21"></line></svg>
+            Series
+        </div>
+        <div class="nav-item" onclick="logout()">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
+            Logout
+        </div>
+    </nav>
+
+
+    <!-- Create / Edit Modal -->
+    <div class="modal" id="createModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="modalTitle">Create New</h2>
+                <button class="close-btn" onclick="closeCreateModal()">&times;</button>
+            </div>
+            <form id="createForm">
+                <input type="hidden" id="editItemId">
+                
+                <label class="cover-upload-area" id="coverUploadArea">
+                    <div class="cover-upload-content">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="var(--text-color)" stroke-width="2" opacity="0.6" style="margin-bottom:8px;"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><polyline points="21 15 16 10 5 21"></polyline></svg>
+                        <div>Click to upload cover image</div>
+                    </div>
+                    <img id="coverPreview" src="" alt="Cover Preview">
+                    <input type="file" id="coverUploadInput" accept="image/*" style="display: none;">
+                    <input type="hidden" id="coverBase64">
+                </label>
+                
+                <div class="form-group">
+                    <label>Title <span style="color:#ef4444">*</span></label>
+                    <input type="text" id="createTitle" required>
+                </div>
+                
+                <div class="form-group">
+                    <label>Summary / Description</label>
+                    <textarea id="createSummary" rows="3" style="resize: vertical;"></textarea>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Tags (comma separated)</label>
+                        <input type="text" id="createTags" placeholder="e.g. magic, adventure">
+                    </div>
+                    <div class="form-group">
+                        <label>Genre / Types</label>
+                        <input type="text" id="createGenre" placeholder="e.g. Fantasy, Romance">
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label>Fandoms</label>
+                    <input type="text" id="createFandom" placeholder="e.g. Harry Potter, Marvel">
+                </div>
+                
+                <button type="submit" class="btn" style="margin-top: 16px;">Save Details</button>
+            </form>
+        </div>
+    </div>
+
+    <script src="/js/api.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', async () => {
+            const themeBtn = document.getElementById('themeToggleBtn');
+            if (themeBtn) {
+                themeBtn.addEventListener('click', () => {
+                    document.body.classList.toggle('dark');
+                    const isDark = document.body.classList.contains('dark');
+                    localStorage.setItem('theme', isDark ? 'dark' : 'light');
+                    
+                    const moon = document.getElementById('moonIcon');
+                    const sun = document.getElementById('sunIcon');
+                    if(moon && sun) {
+                        moon.style.display = isDark ? 'block' : 'none';
+                        sun.style.display = isDark ? 'none' : 'block';
+                    }
+                });
+            }
+
+            // Load user profile
+            const res = await apiFetch("/auth/users/me");
+            if (res && res.ok) {
+                const user = await res.json();
+                document.getElementById('profileUsernameDisplay').textContent = user.username;
+                document.getElementById('profileEmailDisplay').textContent = user.email;
+                
+                let joinedStr = "recently";
+                if (user.created_at) {
+                    const d = new Date(user.created_at);
+                    if (!isNaN(d)) {
+                        joinedStr = d.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
+                    }
+                }
+                document.getElementById('profileJoinedDisplay').textContent = joinedStr;
+                
+                if (user.username) {
+                    if (user.profile_photo_url) {
+                        const largeProfileImage = document.getElementById('largeProfileImage');
+                        if (largeProfileImage) {
+                            largeProfileImage.src = user.profile_photo_url;
+                            largeProfileImage.style.display = 'block';
+                            const largeProfileInitial = document.getElementById('largeProfileInitial');
+                            if (largeProfileInitial) largeProfileInitial.style.display = 'none';
+                        }
+                    } else {
+                        const initial = user.username.charAt(0).toUpperCase();
+                        const profileInitial = document.getElementById('profileInitial');
+                        if (profileInitial) profileInitial.textContent = initial;
+                        const largeProfileInitial = document.getElementById('largeProfileInitial');
+                        if (largeProfileInitial) {
+                            largeProfileInitial.textContent = initial;
+                            largeProfileInitial.style.display = 'flex';
+                        }
+                        const largeProfileImage = document.getElementById('largeProfileImage');
+                        if (largeProfileImage) largeProfileImage.style.display = 'none';
+                    }
+                }
+                
+                // Populate forms
+                document.getElementById("settingsUsername").value = user.username || "";
+                document.getElementById("settingsEmail").value = user.email || "";
+                document.getElementById("settingsFullName").value = user.full_name || "";
+                document.getElementById("settingsDob").value = user.dob || "";
+            }
+            
+            // Load stats
+            const statsRes = await apiFetch("/auth/users/me/stats");
+            if (statsRes && statsRes.ok) {
+                const stats = await statsRes.json();
+                document.getElementById('statStories').textContent = stats.total_stories;
+                document.getElementById('statSeries').textContent = stats.total_series;
+                document.getElementById('statCharacters').textContent = stats.total_characters;
+            }
+        });
+
+        async function updateBasicInfo() {
+            const errDiv = document.getElementById("basicInfoError");
+            const succDiv = document.getElementById("basicInfoSuccess");
+            errDiv.style.display = "none";
+            succDiv.style.display = "none";
+
+            const username = document.getElementById("settingsUsername").value;
+            const email = document.getElementById("settingsEmail").value;
+            const full_name = document.getElementById("settingsFullName").value;
+            const dob = document.getElementById("settingsDob").value;
+
+            const res = await apiFetch("/auth/users/me", {
+                method: "PUT",
+                body: JSON.stringify({ username, email, full_name, dob })
+            });
+
+            if (res && res.ok) {
+                succDiv.textContent = "Profile updated successfully!";
+                succDiv.style.display = "block";
+                document.getElementById('profileUsernameDisplay').textContent = username;
+                document.getElementById('profileEmailDisplay').textContent = email;
+                
+                const profileInitial = document.getElementById('profileInitial');
+                if (profileInitial) profileInitial.textContent = username.charAt(0).toUpperCase();
+                const largeProfileInitial = document.getElementById('largeProfileInitial');
+                if (largeProfileInitial) largeProfileInitial.textContent = username.charAt(0).toUpperCase();
+            } else {
+                const data = await res.json();
+                errDiv.textContent = data.detail || "Error updating profile.";
+                errDiv.style.display = "block";
+            }
+        }
+
+        async function updatePassword() {
+            const errDiv = document.getElementById("pwdError");
+            const succDiv = document.getElementById("pwdSuccess");
+            errDiv.style.display = "none";
+            succDiv.style.display = "none";
+
+            const current = document.getElementById("currentPassword").value;
+            const newPwd = document.getElementById("newPassword").value;
+            const confirm = document.getElementById("confirmNewPassword").value;
+
+            if (newPwd !== confirm) {
+                errDiv.textContent = "New passwords do not match.";
+                errDiv.style.display = "block";
+                return;
+            }
+
+            const res = await apiFetch("/auth/users/me/password", {
+                method: "PUT",
+                body: JSON.stringify({ current_password: current, new_password: newPwd })
+            });
+
+            if (res && res.ok) {
+                succDiv.textContent = "Password updated successfully!";
+                succDiv.style.display = "block";
+                document.getElementById("currentPassword").value = "";
+                document.getElementById("newPassword").value = "";
+                document.getElementById("confirmNewPassword").value = "";
+            } else {
+                const data = await res.json();
+                errDiv.textContent = data.detail || "Error updating password.";
+                errDiv.style.display = "block";
+            }
+        }
+
+        function logout() {
+            localStorage.removeItem('token');
+            sessionStorage.removeItem('token');
+            window.location.href = '/auth.html';
+        }
+        async function uploadProfilePhoto(event) {
+            let file = event.target.files[0];
+            if (!file) return;
+
+            try {
+                if (window.openImageCropper) {
+                    file = await window.openImageCropper(file, 1);
+                }
+            } catch(err) {
+                console.log('Cropping cancelled', err);
+                event.target.value = '';
+                return;
+            }
+
+            const formData = new FormData();
+            formData.append('file', file);
+
+            try {
+                const token = localStorage.getItem('token') || sessionStorage.getItem('token');
+                const response = await fetch('/api/auth/profile/upload', {
+                    method: 'POST',
+                    headers: { 'Authorization': `Bearer ${token}` },
+                    body: formData
+                });
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    
+                    // Update current page DOM
+                    const largeProfileImage = document.getElementById('largeProfileImage');
+                    if (largeProfileImage) {
+                        largeProfileImage.src = data.url;
+                        largeProfileImage.style.display = 'block';
+                    }
+                    const largeProfileInitial = document.getElementById('largeProfileInitial');
+                    if (largeProfileInitial) largeProfileInitial.style.display = 'none';
+                    
+                    // Update global navbar profile pic
+                    const profileImage = document.getElementById('profileImage');
+                    if (profileImage) {
+                        profileImage.src = data.url;
+                        profileImage.style.display = 'block';
+                    }
+                    const profileInitial = document.getElementById('profileInitial');
+                    if (profileInitial) profileInitial.style.display = 'none';
+                    
+                } else {
+                    alert('Failed to upload profile photo');
+                }
+            } catch (e) {
+                console.error(e);
+                alert('An error occurred during upload');
+            }
+        }
+    </script>
+    <script src="/js/pwa.js"></script>
+</body>
+</html>

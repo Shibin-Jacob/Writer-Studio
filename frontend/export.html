@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Writer Studio - Export Story</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <style>
+        .container {
+            max-width: 600px;
+            margin: 40px auto;
+            background: var(--white);
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(28, 63, 83, 0.1);
+        }
+        .format-select {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        .format-card {
+            flex: 1;
+            padding: 20px;
+            border: 2px solid var(--border);
+            border-radius: 8px;
+            text-align: center;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+        .format-card.active {
+            border-color: var(--accent-color);
+            background-color: var(--bg-color);
+        }
+        .format-card h3 {
+            margin: 0 0 10px 0;
+            color: var(--accent-color);
+        }
+        .chapters-list {
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            max-height: 200px;
+            overflow-y: auto;
+            margin-bottom: 20px;
+            padding: 10px;
+        }
+        .chapter-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 8px 0;
+            border-bottom: 1px solid #eee;
+        }
+    </style>
+    <link rel="icon" type="image/png" href="/img/logo-circle.png">
+    <link rel="manifest" href="/manifest.json">
+</head>
+<body>
+    <div class="container">
+        <a href="/dashboard.html" style="color: var(--accent-color); text-decoration: none; display: block; margin-bottom: 20px;">&larr; Back to Dashboard</a>
+        
+        <h2>Export Story</h2>
+        
+        <form id="exportForm">
+            <div class="form-group">
+                <label>Select Format</label>
+                <div class="format-select">
+                    <div class="format-card active" onclick="selectFormat('wstory')" id="fmt-wstory">
+                        <h3>.wstory</h3>
+                        <small>Encrypted Writer Studio Format</small>
+                    </div>
+                    <div class="format-card" onclick="selectFormat('pdf')" id="fmt-pdf">
+                        <h3>.pdf</h3>
+                        <small>Standard PDF</small>
+                    </div>
+                    <div class="format-card" onclick="selectFormat('epub')" id="fmt-epub">
+                        <h3>.epub</h3>
+                        <small>E-book Format</small>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="form-group" id="passwordGroup">
+                <label>Encryption Password (Optional)</label>
+                <input type="password" id="exportPassword" placeholder="Leave blank for default key">
+                <small style="color: #666;">Only applicable for .wstory exports.</small>
+            </div>
+            
+            <div class="form-group">
+                <label>Select Chapters to Export</label>
+                <div class="chapters-list" id="chaptersList">
+                    <!-- Loaded via JS -->
+                    Loading chapters...
+                </div>
+            </div>
+            
+            <button type="submit" class="btn">Download Export</button>
+        </form>
+    </div>
+
+    <script>
+        const urlParams = new URLSearchParams(window.location.search);
+        const storyId = urlParams.get('story_id');
+        let selectedFormat = 'wstory';
+        const token = localStorage.getItem('token') || sessionStorage.getItem('token');
+        
+        if (!token) window.location.href = '/index.html';
+
+        function selectFormat(fmt) {
+            selectedFormat = fmt;
+            document.querySelectorAll('.format-card').forEach(el => el.classList.remove('active'));
+            document.getElementById('fmt-' + fmt).classList.add('active');
+            
+            if (fmt === 'wstory') {
+                document.getElementById('passwordGroup').style.display = 'block';
+            } else {
+                document.getElementById('passwordGroup').style.display = 'none';
+            }
+        }
+
+        async function loadChapters() {
+            try {
+                const res = await fetch(`/api/content/stories/${storyId}/chapters`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                const chapters = await res.json();
+                const list = document.getElementById('chaptersList');
+                list.innerHTML = '';
+                
+                if (chapters.length === 0) {
+                    list.innerHTML = '<p>No chapters available to export.</p>';
+                    return;
+                }
+                
+                chapters.forEach(c => {
+                    list.innerHTML += `
+                        <div class="chapter-item">
+                            <input type="checkbox" name="chapter_id" value="${c.id}" checked>
+                            <span>${c.title}</span>
+                        </div>
+                    `;
+                });
+            } catch (e) {
+                console.error(e);
+            }
+        }
+        
+        if(storyId) {
+            loadChapters();
+        } else {
+            document.getElementById('chaptersList').innerHTML = '<p style="color:red">No Story ID provided.</p>';
+        }
+
+        document.getElementById('exportForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const password = document.getElementById('exportPassword').value;
+            const checkboxes = document.querySelectorAll('input[name="chapter_id"]:checked');
+            const selected_chapters = Array.from(checkboxes).map(cb => parseInt(cb.value));
+            
+            try {
+                const response = await fetch(`/api/export/generate`, {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        story_id: parseInt(storyId),
+                        password: password,
+                        format: selectedFormat,
+                        selected_chapters: selected_chapters
+                    })
+                });
+                
+                if (response.ok) {
+                    const blob = await response.blob();
+                    const url = window.URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    
+                    const contentDisposition = response.headers.get('Content-Disposition');
+                    let filename = `export.${selectedFormat}`;
+                    if (contentDisposition) {
+                        const filenameMatch = contentDisposition.match(/filename=(.+)/);
+                        if (filenameMatch.length === 2)
+                            filename = filenameMatch[1];
+                    }
+                    
+                    a.download = filename;
+                    document.body.appendChild(a);
+                    a.click();
+                    window.URL.revokeObjectURL(url);
+                    a.remove();
+                } else {
+                    alert('Export failed.');
+                }
+            } catch (err) {
+                console.error(err);
+                alert("An error occurred during export.");
+            }
+        });
+    </script>
+    <script src="/js/pwa.js"></script>
+</body>
+</html>

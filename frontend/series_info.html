@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Series Workspace - Writer Studio</title>
+    <link rel="stylesheet" href="/css/style.css?v=11">
+    <link rel="icon" type="image/png" href="/img/logo-circle.png">
+    <style>
+        /* Specific overrides if needed for Series Workspace */
+        body { margin: 0; padding: 0; display: flex; flex-direction: column; height: 100vh; overflow: hidden; }
+        
+        .top-navbar {
+            height: 64px;
+            background: var(--surface);
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            padding: 0 24px;
+            justify-content: space-between;
+        }
+        body.dark .top-navbar { background: rgba(10, 14, 39, 0.5); }
+        .navbar-brand { display: flex; align-items: center; gap: 12px; font-size: 1.25rem; font-weight: 700; color: var(--text-color); text-decoration: none; }
+        .navbar-actions { display: flex; align-items: center; gap: 16px; }
+        .profile-circle { width: 36px; height: 36px; border-radius: 50%; background-color: var(--brand-teal); display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; cursor: pointer; overflow: hidden; text-decoration: none; }
+        .icon-btn { background: none; border: none; color: var(--text-color); cursor: pointer; width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; }
+        .icon-btn:hover { background: rgba(128, 128, 128, 0.1); }
+        
+        .layout-container {
+            display: flex;
+            flex: 1;
+            overflow: hidden;
+            height: calc(100vh - 64px);
+        }
+
+        .story-card-mini {
+            display: flex;
+            align-items: center;
+            padding: 12px;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            margin-bottom: 12px;
+            transition: all 0.2s;
+            cursor: pointer;
+            text-decoration: none;
+            color: var(--text-color);
+        }
+        .story-card-mini:hover {
+            border-color: var(--accent-color);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+        }
+        
+        /* Modal for Link Story */
+        .modal-overlay {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0,0,0,0.5);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+        }
+        .modal-overlay.active { display: flex; }
+        .modal-content {
+            background: var(--surface);
+            width: 500px;
+            max-width: 90%;
+            border-radius: 12px;
+            padding: 24px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            max-height: 80vh;
+            display: flex;
+            flex-direction: column;
+        }
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid var(--border);
+            padding-bottom: 16px;
+            margin-bottom: 16px;
+        }
+        .modal-body {
+            overflow-y: auto;
+            flex: 1;
+        }
+        .unlinked-story-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            margin-bottom: 8px;
+        }
+        .unlinked-story-item:hover {
+            background: rgba(128,128,128,0.05);
+        }
+    </style>
+</head>
+<body>
+    <div class="top-navbar">
+        <a href="/dashboard.html" class="navbar-brand">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+            <span id="navSeriesTitle">Loading Series...</span>
+        </a>
+        <div class="navbar-actions">
+            <button class="btn" onclick="exportSeries()" title="Export .wseries Backup" style="display: flex; gap: 8px; align-items: center;">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+                Export Series
+            </button>
+            <button class="icon-btn" onclick="toggleTheme()" title="Toggle Theme">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.2 4.2l1.4 1.4M18.4 18.4l1.4 1.4M1 12h2M21 12h2M4.2 19.8l1.4-1.4M18.4 5.6l1.4-1.4"/></svg>
+            </button>
+            <a href="/profile.html" class="profile-circle" id="profileCircle" title="Profile" style="text-decoration: none;">
+                <span id="profileInitial">U</span>
+            </a>
+        </div>
+    </div>
+
+    <div class="layout-container">
+        <!-- Series Info Sidebar -->
+        <div class="split-sidebar" style="padding: 24px;">
+            <div style="margin-bottom: 24px; text-align: center;">
+                <div id="seriesCoverContainer" style="width: 120px; height: 180px; background: #e0e0e0; border-radius: 8px; margin: 0 auto 16px auto; display: flex; align-items: center; justify-content: center; color: #888; overflow: hidden; position: relative;">
+                    No Cover
+                </div>
+                <h2 id="sidebarSeriesTitle" style="margin: 0 0 8px 0; font-size: 1.5rem;">Series Title</h2>
+            </div>
+            
+            <form id="editSeriesForm" style="display: flex; flex-direction: column; gap: 16px;">
+                <div class="form-group">
+                    <label>Title</label>
+                    <input type="text" id="editTitle" required class="form-input">
+                </div>
+                <div class="form-group">
+                    <label>Description</label>
+                    <textarea id="editDescription" class="form-input" rows="4"></textarea>
+                </div>
+                <div class="form-group">
+                    <label>Tags</label>
+                    <input type="text" id="editTags" class="form-input" placeholder="fantasy, magic">
+                </div>
+                <button type="submit" class="btn" style="width: 100%;">Save Changes</button>
+            </form>
+        </div>
+
+        <!-- Main Workspace (Linked Stories) -->
+        <div class="split-main" style="padding: 40px; background: var(--bg-color); overflow-y: auto;">
+            <div style="max-width: 800px; margin: 0 auto;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; border-bottom: 1px solid var(--border); padding-bottom: 16px;">
+                    <h2>Linked Stories</h2>
+                    <button class="btn" onclick="openLinkModal()">+ Link Existing Story</button>
+                </div>
+                
+                <div id="linkedStoriesList" style="display: flex; flex-direction: column; gap: 12px;">
+                    <p style="text-align: center; color: #888;">Loading linked stories...</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Link Story Modal -->
+    <div class="modal-overlay" id="linkModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 style="margin:0;">Link Story to Series</h3>
+                <button class="icon-btn" onclick="closeLinkModal()"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg></button>
+            </div>
+            <div class="modal-body" id="unlinkedStoriesList">
+                <p style="text-align: center; color: #888;">Loading available stories...</p>
+            </div>
+        </div>
+    </div>
+
+    <script src="/js/series_workspace.js?v=2"></script>
+    <script>
+        function toggleTheme() {
+            document.body.classList.toggle('dark');
+            const isDark = document.body.classList.contains('dark');
+            localStorage.setItem('theme', isDark ? 'dark' : 'light');
+        }
+        if (localStorage.getItem('theme') === 'dark') {
+            document.body.classList.add('dark');
+        }
+    </script>
+</body>
+</html>
